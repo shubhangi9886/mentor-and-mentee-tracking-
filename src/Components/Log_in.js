@@ -1,16 +1,17 @@
 import React from 'react';
 import axios from 'axios';
+import Homepage from './Homepage'
 // import { Link } from 'react-router-dom';
 
-const validEmailRegex = RegExp(
-  /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
-);
+// const validEmailRegex = RegExp(
+//   /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+// );
 
-const validateForm = errors => {
-  let valid = true;
-  Object.values(errors).forEach(val => val.length > 0 && (valid = false));
-  return valid;
-};
+// const validateForm = errors => {
+//   let valid = true;
+//   Object.values(errors).forEach(val => val.length > 0 && (valid = false));
+//   return valid;
+// };
 
 export default class Login extends React.Component {
   constructor(props) {
@@ -34,26 +35,28 @@ export default class Login extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault();
     const getData = axios.post("http://localhost:8000/mentor_mentee/login", {
-        email: this.state.email,
-        password: this.state.password, 
-    })
-      .then(res => {
-        console.log(res);
+      email: this.state.email,
+      password: this.state.password
+    }).then(res => {
+      console.log(res);
+      localStorage.setItem("token", res);
+      // console.log(localStorage)
+      const token = localStorage.getItem("token");
 
-        const n = axios.get('http://localhost:8000/mentor_mentee/verify',)
-          .then(respo => {
-            console.log(respo)
-            if (respo.data === true) {
-              window.location.href = "/Homepage";
-            } else {
-              window.location.href = "/";
-            }
-          });
-        this.setState({
-          loading: true
+      const n = axios.get('http://localhost:8000/mentor_mentee/verify', { params: { token: token } })
+        .then(respo => {
+          console.log(respo)
+          if (respo === true) {
+            window.location.href = '/';
+          } else {
+            window.location.href = "/Homepage";
+          }
         });
-        console.log(n)
-      })
+      this.setState({
+        loading: true
+      });
+      console.log(n)
+    })
       .catch(err => {
         console.log(err);
       });

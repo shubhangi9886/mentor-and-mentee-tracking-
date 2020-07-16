@@ -1,6 +1,5 @@
 import React from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 
 const validEmailRegex = RegExp(
@@ -46,11 +45,14 @@ export default class Signup extends React.Component {
       }
     })
       .then((res) => {
-        console.log(res.data)
-
+        console.log(res)
+        if (res === true) {
+          window.location.href = '/';
+        } else {
+          window.location.href = "/login";
+        }
       }).catch((error) => {
         console.log(error)
-
       });
   }
 
@@ -58,7 +60,7 @@ export default class Signup extends React.Component {
     const { FirstName, LastName, email, password } = this.state
     console.log(this.state)
     return (
-      <div className='wrapper'>   
+      <div className='wrapper'>
         <div className='form-wrapper'>
           <h2>Create Account</h2>
           <form onSubmit={this.handleSubmit} noValidate>
